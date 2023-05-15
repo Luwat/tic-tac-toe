@@ -6,4 +6,17 @@ const Gameboard = (() => {
     }
 })()
 
-console.log(Gameboard.gameboard);
+const DisplayController = (() => {
+
+    return {
+
+    }
+})()
+
+const Player = () => {
+
+    return {
+
+    }
+}
+

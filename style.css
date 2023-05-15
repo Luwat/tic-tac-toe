@@ -1,0 +1,9 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: 20px 20px 20px;
+    grid-template-rows: 20px 20px 20px;
+}
+
+.item {
+    border: 1px solid red;
+}
