@@ -1,5 +1,5 @@
 const Gameboard = (() => {
-    const gameboard = ['x', 'o', 'x', 'o', 'x', 'o', 'x', 'o', 'x'];
+    const gameboard = ['', '', '', '', '', '', '', '', ''];
     
     const setField = (index, sign) => {
         if (index > gameboard.length) return;
@@ -38,16 +38,32 @@ const DisplayController = (() => {
 
     restartButton.addEventListener('click', (e) => {
         Gameboard.reset();
-        setMessageElement("Player X's turn")
-    })
+        gameController.reset();
+        updateGameboard();
+        setMessageElement("Player X's turn");
+    });
 
     const updateGameboard = () => {
         for (let i=0; i < fieldElements.length; i++) {
             fieldElements[i].textContent = Gameboard.getField(i)
         }
-    }
-    return {
+    };
 
+    const setResultMessage = (winner) => {
+        if (winner === 'Draw') {
+            setMessageElement("It's a draw!")
+        }else {
+            setMessageElement(`Player ${winner} has won!`);
+        }
+    };
+
+    const setMessageElement = (message) => {
+        messageElement.textContent = message;
+    }
+
+    return {
+        setResultMessage,
+        setMessageElement,
     }
 })();
 
@@ -63,18 +79,65 @@ const Player = (sign) => {
 }
 
 const gameController = (() => {
+    const playerX = Player('X');
+    const playerO = Player('O');
+    let round = 1;
+    let isOver = false;
 
+    const playRound = (fieldIndex) => {
+        Gameboard.setField(fieldIndex, getCurrentPlayerSign());
+        if (checkWinner(fieldIndex)) {
+            DisplayController.setResultMessage(getCurrentPlayerSign());
+            isOver = true;
+            return;
+        }
 
+        if (round === 9) {
+            DisplayController.setResultMessage('Draw');
+            isOver = true
+            return;
+        }
+
+        round++;
+        DisplayController.setMessageElement(`Player ${getCurrentPlayerSign()}'s turn`)
+    };
+    
+    const getCurrentPlayerSign = () => {
+        return round % 2 === 1 ? playerX.getSign() : playerO.getSign();
+    }
+
+    const checkWinner = (fieldIndex) => {
+        const winConditions = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6],
+        ];
+
+        return winConditions
+        .filter((combination) => combination.includes(fieldIndex))
+        .some((possibleCombination) => 
+        possibleCombination.every(
+            (index) => Gameboard.getField(index) === getCurrentPlayerSign()
+        ));
+    };
+
+    const getIsOver = () => {
+        return isOver
+    };
+
+    const reset = () => {
+        round = 1;
+        isOver = false;
+    };
+
+    return {
+        playRound,
+        getIsOver,
+        reset,
+    }
 })();
-const playerX = Player('X');
-const playerO = Player('O');
-
-console.log(playerO.getSign())
-console.log(playerX.getSign())
-console.log(Gameboard.setField(7, playerX.getSign()))
-
-const getField = () => {
-    return Gameboard.getField(7)
-}
-
-console.log(getField());
