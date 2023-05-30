@@ -1,9 +1,10 @@
-.grid-container {
+.gameboard {
     display: grid;
     grid-template-columns: 20px 20px 20px;
     grid-template-rows: 20px 20px 20px;
 }
 
-.item {
+.field {
     border: 1px solid red;
+    cursor: pointer;
 }
